@@ -57,15 +57,22 @@ async def remind_day_before_meetup(now: datetime.datetime):
         global accepted_times
         accepted_times.append(now)
     else:
-        await main.channel.send("@everyone Meetup tomorrow at 6!" + main.message_footer)
+        await main.channel.send("@everyone Meetup tomorrow at 6! (Unless it's christmas or something...)" + main.message_footer)
 
-day_before_reminder_runner = CronRunner(18, 0, remind_day_before_meetup)
+remind_day_before_meetup_runner = CronRunner(18, 0, remind_day_before_meetup)
 
+
+async def remind_just_before_start(now: datetime.datetime):
+    if not is_meetup_day(now):
+        return
+    await main.channel.send("@everyone Meetup in ten minutes! (Unless it's christmas or something...)" + main.message_footer)
+
+remind_just_before_start_runner = CronRunner(17, 50, remind_just_before_start)
 
 
 @discord.ext.tasks.loop(seconds=30)
 async def run():
-    for runner in [day_before_reminder_runner]:
+    for runner in [remind_day_before_meetup_runner, remind_just_before_start_runner]:
         await runner.try_run()
 
 
@@ -83,7 +90,7 @@ def test():
     async def start_test_runners():
         test_dt = datetime.datetime(2020, 10, 1)
         while test_dt < datetime.datetime(2020, 12, 31):
-            await day_before_reminder_runner.try_run(timezone.localize(test_dt))
+            await remind_day_before_meetup_runner.try_run(timezone.localize(test_dt))
             test_dt += datetime.timedelta(seconds=30)
 
     loop = asyncio.new_event_loop()
