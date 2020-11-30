@@ -7,6 +7,7 @@ client = discord.Client()
 guild: discord.Guild = None
 channel: discord.GroupChannel = None
 
+message_footer = "\nI'm a custom bot for this meetup discord. You can edit me here: https://github.com/wheybags/frankfurt_meetup_bot"
 
 @client.event
 async def on_ready():

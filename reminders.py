@@ -57,9 +57,10 @@ async def remind_day_before_meetup(now: datetime.datetime):
         global accepted_times
         accepted_times.append(now)
     else:
-        await main.channel.send("@everyone Meetup tomorrow at 6!")
+        await main.channel.send("@everyone Meetup tomorrow at 6!" + main.message_footer)
 
 day_before_reminder_runner = CronRunner(18, 0, remind_day_before_meetup)
+
 
 
 @discord.ext.tasks.loop(seconds=30)
